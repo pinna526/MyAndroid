@@ -3,6 +3,7 @@ package com.example.myinputrmb;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,6 +12,8 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
@@ -35,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.security.auth.login.LoginException;
 
 
 public class InputRMB_A extends AppCompatActivity implements Runnable{
@@ -76,29 +81,30 @@ public class InputRMB_A extends AppCompatActivity implements Runnable{
 
         //获取线程的消息
 
-        handler = new Handler(){
-            public void handleMessage(Message msg){
-                if(msg.what==2){
+        handler = new Handler() {
+            public void handleMessage(Message msg) {
+                if (msg.what == 2) {
                     mp = (Map<String, Float>) msg.obj;
                 }
 
                 list = new ArrayList<Map<String, String>>();
-                for(Map.Entry<String, Float> entry : mp.entrySet()) {
-                    Map<String,String> map = new HashMap<>();
-                    map.put("name",entry.getKey());
-                    map.put("rate",String.valueOf(entry.getValue()));
+                for (Map.Entry<String, Float> entry : mp.entrySet()) {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("name", entry.getKey());
+                    map.put("rate", String.valueOf(entry.getValue()));
                     list.add(map);
 //                    list.add(entry.getKey() + " 今日的汇率是：" + entry.getValue());
                 }
 
                 //设置列表数据
-               SimpleAdapter listItemAdapter = new SimpleAdapter(InputRMB_A.this,
+                SimpleAdapter listItemAdapter = new SimpleAdapter(InputRMB_A.this,
                         list,
                         R.layout.my_listview,
-                        new String[] {"name","rate"},
-                        new int[] {R.id.name,R.id.rate}
-                        );
+                        new String[]{"name", "rate"},
+                        new int[]{R.id.name, R.id.rate}
+                );
                 listView.setAdapter(listItemAdapter);
+
 //                ListAdapter ad = new ArrayAdapter<>(InputRMB_A.this,
 //                        android.R.layout.simple_list_item_1,list);
 //                listView.setAdapter(ad);
@@ -107,11 +113,11 @@ public class InputRMB_A extends AppCompatActivity implements Runnable{
                 Float dollarRate = mp.get("美元");
                 Float euroRate = mp.get("欧元");
                 Float wonRate = mp.get("韩元");
-                SharedPreferences sp = getSharedPreferences("myrate",Activity.MODE_PRIVATE);
+                SharedPreferences sp = getSharedPreferences("myrate", Activity.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putFloat("dollar_rate",dollarRate);
-                editor.putFloat("euro_rate",euroRate);
-                editor.putFloat("won_rate",wonRate);
+                editor.putFloat("dollar_rate", dollarRate);
+                editor.putFloat("euro_rate", euroRate);
+                editor.putFloat("won_rate", wonRate);
                 editor.apply();
 
                 super.handleMessage(msg);
@@ -124,6 +130,28 @@ public class InputRMB_A extends AppCompatActivity implements Runnable{
         dollarToRMB = sharedPreferences.getFloat("dollar_rate", 683f);
         euroToRMB = sharedPreferences.getFloat("euro_rate", 797f);
         wonToRMB = sharedPreferences.getFloat("won_rate", 0.58f);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //输出一下熟悉参数
+                Log.i(TAG, "onItemClick: parent:"+parent);
+                Log.i(TAG, "onItemClick: view:"+view);
+                Log.i(TAG, "onItemClick: position"+position);
+                Log.i(TAG, "onItemClick: id"+id);
+
+                //指定输出
+                HashMap<String,String> map = (HashMap<String,String>)listView.getItemAtPosition(position);
+                Log.i(TAG, "onItemClick: name:"+map.get("name"));
+                Log.i(TAG, "onItemClick: rate:"+map.get("rate"));
+
+                Intent inputItem = new Intent(InputRMB_A.this, inputItem.class);
+                inputItem.putExtra("name",map.get("name"));
+                inputItem.putExtra("rate",map.get("rate"));
+                startActivity(inputItem);
+
+            }
+        });
 
 
     }

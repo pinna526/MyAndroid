@@ -3,9 +3,7 @@
     package="com.example.myinputrmb">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <!--明文传输解决：https://blog.csdn.net/weixin_43876206/article/details/103497419
-    android:usesCleartextTraffic="true"
-    -->
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,6 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".inputItem">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".TestList">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
