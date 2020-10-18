@@ -1,11 +1,14 @@
 package com.example.myinputrmb;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -132,6 +135,7 @@ public class InputRMB_A extends AppCompatActivity implements Runnable{
         wonToRMB = sharedPreferences.getFloat("won_rate", 0.58f);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //输出一下熟悉参数
@@ -148,7 +152,7 @@ public class InputRMB_A extends AppCompatActivity implements Runnable{
                 Intent inputItem = new Intent(InputRMB_A.this, inputItem.class);
                 inputItem.putExtra("name",map.get("name"));
                 inputItem.putExtra("rate",map.get("rate"));
-                startActivity(inputItem);
+                startActivity(inputItem, ActivityOptions.makeSceneTransitionAnimation(InputRMB_A.this).toBundle());
 
             }
         });
