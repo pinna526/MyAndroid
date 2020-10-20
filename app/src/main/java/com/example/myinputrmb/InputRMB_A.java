@@ -25,6 +25,10 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mydb.DBHelper;
+import com.example.mydb.RateItem;
+import com.example.mydb.RateManager;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -42,7 +46,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.login.LoginException;
 
 
 public class InputRMB_A extends AppCompatActivity implements Runnable{
@@ -202,11 +205,20 @@ public class InputRMB_A extends AppCompatActivity implements Runnable{
                 //除以100是因为网站上的汇率是每100元人民币
                 map.put(str1,Float.parseFloat(str2)/100);
 //                Log.i(TAG, "getNet:"+str1+"  "+str2);
+
+                //将网络资源添加到数据库里
+                RateItem item = new RateItem();
+                item.setName(str1);
+                item.setRate(str2);
+                RateManager rmana = new RateManager(InputRMB_A.this);
+                rmana.add(item);
+
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return map;
     }
 
@@ -284,7 +296,7 @@ public class InputRMB_A extends AppCompatActivity implements Runnable{
                 System.out.println("两个时间之间的天数差为：" + days);
 
                 //若登录时间相隔超过一天，则重新从网络中获取资源
-                if(days>=1){
+                if(days>=0){
                     Map<String,Float> mp = getNetSource();
                     Message msg = handler.obtainMessage(2);
                     msg.obj = mp;
